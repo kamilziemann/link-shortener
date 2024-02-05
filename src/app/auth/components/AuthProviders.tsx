@@ -45,7 +45,7 @@ const AuthProviders: FC<Props> = () => {
       const { data, error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-          emailRedirectTo: 'localhost:3000/auth/callback',
+          emailRedirectTo: '/auth/callback',
         },
       });
 

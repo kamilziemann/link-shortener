@@ -48,6 +48,7 @@ const SignUpForm: FC = () => {
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
+        options: { emailRedirectTo: 'localhost:3000/auth/callback' },
       });
 
       if (error) {

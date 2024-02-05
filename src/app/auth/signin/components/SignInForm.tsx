@@ -13,6 +13,7 @@ import TextDivider from '@/components/TextDivider';
 import { useMutation } from '@tanstack/react-query';
 import { emailValidation, passwordValidation } from '@/lib/validations';
 import AuthProviders from '@/app/auth/components/AuthProviders';
+import { redirect } from 'next/navigation';
 
 interface SignInStatus {
   status: 'loading' | 'success' | 'error' | null;
@@ -58,6 +59,10 @@ const SignInForm: FC = () => {
   const onSubmit = (formData: SignInFormValues) => mutation.mutateAsync(formData);
 
   const isLoading = mutation.isPending;
+
+  if (mutation?.data?.session) {
+    redirect('/dashboard');
+  }
 
   return (
     <div className="grid gap-2">

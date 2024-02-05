@@ -14,11 +14,12 @@ import { useFormContext } from 'react-hook-form';
 interface Props {
   name: string;
   label: string;
+  className?: string;
   description?: string;
   inputProps?: Partial<InputHTMLAttributes<HTMLInputElement>>;
 }
 
-const InputField: FC<Props> = ({ name, label, description, inputProps }) => {
+const InputField: FC<Props> = ({ name, label, className, description, inputProps }) => {
   const { control } = useFormContext();
 
   return (
@@ -26,7 +27,7 @@ const InputField: FC<Props> = ({ name, label, description, inputProps }) => {
       control={control}
       name={name}
       render={({ field }) => (
-        <FormItem className="space-y-1">
+        <FormItem className={cn('space-y-1', className)}>
           <FormLabel>{label}</FormLabel>
           <FormControl>
             <Input {...inputProps} className={inputProps?.className} {...field} />
