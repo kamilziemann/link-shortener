@@ -10,7 +10,7 @@ const supabase = createClient(
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const originalUrl = body.originalUrl;
+  const { expiresAt, originalUrl } = body ?? {};
 
   if (!originalUrl) {
     return new NextResponse(JSON.stringify({ error: 'originalUrl is required' }), {
@@ -24,11 +24,12 @@ export async function POST(req: NextRequest) {
   const shortCode = nanoid(6);
 
   const { data, error } = await supabase
-    .from('ShortenedLinks')
-    .insert([{ short_code: shortCode, original_url: originalUrl }])
-    .select('short_code')
+    .from('links')
+    .insert([{ short_code: shortCode, original_url: originalUrl, expires_at: expiresAt }])
+    .select('short_code, expires_at')
     .single();
 
+  console.log(expiresAt);
   if (error) {
     return new NextResponse(JSON.stringify({ error: error.message }), {
       status: 500,
@@ -38,10 +39,13 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  return new NextResponse(JSON.stringify({ shortCode: data.short_code }), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
+  return new NextResponse(
+    JSON.stringify({ shortCode: data.short_code, expiresAt: data.expires_at }),
+    {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-  });
+  );
 }

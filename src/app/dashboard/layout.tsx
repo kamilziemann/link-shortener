@@ -27,7 +27,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
     redirect('/auth/signin');
   }
 
-  console.log('SESSION', { data }, { error });
   return (
     <>
       <nav className="border-b flex h-16 items-center px-4 justify-between">
