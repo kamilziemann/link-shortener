@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,7 +9,17 @@ import {
 } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { MenuIcon, UserIcon } from 'lucide-react';
+import { UserIcon } from 'lucide-react';
+
+import { createServerActionClient } from '@supabase/auth-helpers-nextjs';
+import { cookies } from 'next/headers';
+
+const supabaseServer = async () => {
+  const cookieStore = cookies();
+  const supabase = createServerActionClient({ cookies: () => cookieStore });
+
+  return supabase;
+};
 
 export const metadata: Metadata = {
   title: 'Link app',
@@ -19,7 +27,7 @@ export const metadata: Metadata = {
 };
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const supabase = createServerComponentClient({ cookies });
+  const supabase = await supabaseServer();
 
   const { data, error } = await supabase.auth.getSession();
 
