@@ -9,7 +9,7 @@ import { appURL, getUserLocale } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 import { useMutation } from '@tanstack/react-query';
-import { formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration, isPast } from 'date-fns';
 import { ChevronDownIcon, ChevronUpIcon, CopyIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -25,7 +25,7 @@ const shortLinkFormSchema = z.object({
   expiresAt: z
     .date()
     .optional()
-    .refine((expiresAt) => (expiresAt ? expiresAt > new Date() : undefined), {
+    .refine((expiresAt) => (expiresAt ? !isPast(expiresAt) : true), {
       message: 'Start date must be in the future',
     }),
 });
@@ -143,10 +143,14 @@ const LinkShortenerForm: FC<Props> = () => {
             </code>
             <CopyButton value={shortedUrl} />
           </div>
-          Link wygaśnie za:{' '}
-          {formatDuration(intervalToDuration({ start: new Date(), end: mutation.data.expiresAt }), {
+          {mutation.data.expiresAt ? (
+            <p className="pt-2">
+              Expires at {mutation.data.expiresAt}
+              {/* {formatDuration(intervalToDuration({ start: new Date(), end: mutation.data.expiresAt }), {
             locale: getUserLocale(),
-          })}
+          })} */}
+            </p>
+          ) : null}
         </pre>
       ) : null}
     </div>

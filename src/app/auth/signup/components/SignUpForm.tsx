@@ -35,6 +35,8 @@ const defaultValues: Partial<SignUpFormValues> = {
   password: '',
 };
 
+const { NEXT_PUBLIC_APP_URL = '' } = process.env;
+
 const SignUpForm: FC = () => {
   const supabase = createClientComponentClient();
 
@@ -48,7 +50,7 @@ const SignUpForm: FC = () => {
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
-        options: { emailRedirectTo: 'localhost:3000/auth/callback' },
+        options: { emailRedirectTo: `${NEXT_PUBLIC_APP_URL}/auth/callback` },
       });
 
       if (error) {

@@ -7,6 +7,8 @@ const supabase = createClient(
   process.env.SUPABASE_SECRET_KEY || '',
 );
 
+const { NEXT_PUBLIC_APP_URL = '' } = process.env;
+
 export async function GET(req: NextRequest, { params }: { params: { slug: string } }) {
   const { data, error } = await supabase
     .from('links')
@@ -17,7 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   if (error) {
     const statusCode = error.code === 'PGRST116' ? 'notFound' : 'error';
 
-    return NextResponse.redirect(`http://localhost:3000/status?code=${statusCode}`, {
+    return NextResponse.redirect(`${NEXT_PUBLIC_APP_URL}/status?code=${statusCode}`, {
       status: 302,
     });
   }
@@ -25,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
   await supabase.from('link_stats').insert({ shortened_link_id: data.id });
 
   const urlToRedirect = isPast(data.expires_at)
-    ? 'http://localhost:3000/status?code=expired'
+    ? `${NEXT_PUBLIC_APP_URL}/status?code=expired`
     : data.original_url;
 
   return NextResponse.redirect(urlToRedirect, {
